@@ -90,7 +90,7 @@ class Calculator extends React.Component {
           <Card.Body>
             <Row><Col><p>{this.state.resultText}</p> </Col></Row>
             <Row>
-              <Col sm={8}>
+              <Col>
                 <Form>
                   <Form.Group controlId="formPercent">
                     <Form.Control 
@@ -101,12 +101,10 @@ class Calculator extends React.Component {
                       onChange={this.updateEntry} value={this.state.entry}
                       ref={c => (this.myInputRef = c)}
                     /> {' '}  
+                    <Button variant="secondary" onClick={() => this.clearList()}>Clear</Button>
                   </Form.Group>
                 </Form>              
-              </Col>
-              <Col sm={4}>
-                <Button variant="secondary" onClick={() => this.clearList()}>Clear</Button>
-              </Col>              
+=              </Col>              
             </Row>
             <p />
             <Row><Col>{this.calculateRows()}</Col></Row>
