@@ -90,7 +90,7 @@ class Calculator extends React.Component {
           <Card.Body>
             <Row><Col><p>{this.state.resultText}</p> </Col></Row>
             <Row>
-              <Col xs="auto">
+              <Col xs={4}>
                 <Form>
                   <Form.Group controlId="formPercent">
                     <Form.Control 
@@ -104,7 +104,7 @@ class Calculator extends React.Component {
                   </Form.Group>
                 </Form>              
               </Col>
-              <Col xs="auto">
+              <Col>
                 <Button variant="secondary" onClick={() => this.clearList()}>Clear</Button>
               </Col>              
             </Row>
