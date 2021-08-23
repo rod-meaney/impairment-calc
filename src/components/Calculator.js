@@ -1,7 +1,7 @@
 import React from 'react';
-import {TrashFill} from 'react-bootstrap-icons';
+import {XSquare} from 'react-bootstrap-icons';
 import { Alert, Card, Form, Col, Button, Row, ListGroup } from 'react-bootstrap';
-import { footer } from './utils';
+import { footer, is2DigitNumber, sumImpiarmentArray } from './utils';
 
 class Calculator extends React.Component {
   constructor (props) {
@@ -9,9 +9,7 @@ class Calculator extends React.Component {
     this.state = {
       entry:"",
       percents:[],
-      total:0,
-      resultText:"Start entering numbers",
-      resultTextDefault:"Start entering numbers"
+      totalPercent:0
     }
     this.setInputFocus = this.setInputFocus.bind(this);
   }
@@ -21,39 +19,21 @@ class Calculator extends React.Component {
   }
 
   clearList() {
-    this.setState({percents:[], entry:"", resultText:this.state.resultTextDefault});
+    this.setState({percents:[], entry:"", totalPercent:0});
     this.setInputFocus();
-  }
-
-  calculate(array) {
-    var total=0; /* here */
-    var remainder=100; /* here */
-    array.forEach(function (item, index) {
-      remainder = (100-total);
-      total = total + remainder*(parseInt(item,10)/100);
-    });
-    return Math.round(total)+"% impairment (2DP "+ Math.round(total*100)/100 + "%)";
-  }
-
-  isNumber(digits){
-    const nums = ['0','1','2','3','4','5','6','7','8','9'];
-    if(nums.indexOf(digits[0])===-1){return false;}
-    if(nums.indexOf(digits[1])===-1){return false;}
-    return true;
   }
 
   updateEntry = (event) => {
     const val = event.target.value;
     if (val.length === 2){
-      if (this.isNumber(val)){
+      if (is2DigitNumber(val)){
         const newArr = this.state.percents;
         newArr.push(val);
-        event.preventDefault(); this.setState({entry:"", percents:newArr, resultText:this.calculate(newArr)});
+        event.preventDefault(); this.setState({entry:"", percents:newArr, totalPercent:sumImpiarmentArray(newArr)});
       } else {
         alert('Must be a number between 01 and 99.')
         event.preventDefault(); this.setState({entry:""});
       }
-
     } else {
       event.preventDefault(); this.setState({entry:event.target.value});
     }
@@ -62,11 +42,11 @@ class Calculator extends React.Component {
   removeItem = (key) => {
     const newArr = this.state.percents;
     newArr.splice(key,1);
-    var text = this.state.resultTextDefault
+    var newVal = 0;
     if (newArr.length !== 0){
-      text = this.calculate(newArr);
+      newVal = sumImpiarmentArray(newArr);
     }
-    this.setState({percents:newArr, entry:"", resultText:text});
+    this.setState({percents:newArr, entry:"", totalPercent:newVal});
     this.setInputFocus();
   }
 
@@ -75,11 +55,19 @@ class Calculator extends React.Component {
       <ListGroup>
         {this.state.percents.map((item,index) => (
             <ListGroup.Item key={index} >{item}
-              <span className="float-end"><TrashFill onClick={() => this.removeItem(index)} /></span>
+              <span className="float-end"><XSquare onClick={() => this.removeItem(index)} /></span>
             </ListGroup.Item>
         ))}
       </ListGroup>
     )
+  }
+
+  renderResult(){
+    if (this.state.totalPercent > 0 ) {
+      return (<><b>{Math.round(this.state.totalPercent)}%</b> impairment (2DP {Math.round(this.state.totalPercent*100)/100}%)</>)
+    } else {
+      return "Start entering numbers"
+    }
   }
 
   render(){
@@ -88,7 +76,7 @@ class Calculator extends React.Component {
         <p />
         <Card>
           <Card.Body>
-            <Row><Col><p>{this.state.resultText}</p> </Col></Row>
+            <Row><Col><p>{this.renderResult()}</p> </Col></Row>
             <Row>
               <Col xs={7}>
                 <Form>
